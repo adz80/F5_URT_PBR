@@ -10,6 +10,10 @@ import sys
 # https://pypi.org/project/ciscoconfparse/ ciscoconfparse documentation
 # This is the ugliest code I have ever hacked together. 
 # Please refactor and document when time permits.
+#
+#
+#
+#
 
 # parse = CiscoConfParse('10_105_96_36.f5bigip_full', syntax='junos', comment='#')
 # parse = CiscoConfParse('testconfig.cfg', syntax='junos', comment='#')
@@ -37,6 +41,10 @@ def get_next_hop_interface(next_hop_ip, parse):
         if IPAddress(next_hop_ip) in IPNetwork(local_interface_ip_and_prefix_mask):
             # print('match!!!')
             return local_interface_vlan
+
+
+
+
 
 # for f5_virtual in parse.find_objects(r'ltm virtual.*policy_route'): # added multiple matches of VIP naming convention.
 for f5_virtual in parse.find_objects('ltm virtual policy*'):
@@ -84,5 +92,25 @@ for f5_virtual in parse.find_objects('ltm virtual policy*'):
                         )
                     )
 
+
+print('''
+#Interfaces:
+''')
+all_net_self = parse.find_objects(r'net self ')
+for net_self in all_net_self:
+    net_self_address_obj = net_self.re_search_children(r"address")[0]
+    net_self_vlan_name_obj = net_self.re_search_children(r"vlan ")[0]
+    net_self_address = IPNetwork(net_self_address_obj.text.strip().split(' ')[1])
+    net_self_vlan_name = net_self_vlan_name_obj.text.strip().split(' ')[1]
+    
+    print(net_self_address.network, net_self_address.netmask, "	-	", net_self_vlan_name, net_self_vlan_name)
+    
+
+
+
+
+
+def create_interfaces_urt():
+    pass
 
 

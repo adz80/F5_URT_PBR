@@ -5,7 +5,7 @@ from operator import attrgetter
 from netaddr import *
 
 '''
-Please see dcumnetation for Cisco Conf Parse on functions that are used.
+Please see documentation for Cisco Conf Parse on functions that are used.
 
 http://www.pennington.net/py/ciscoconfparse/api_CiscoConfParse.html
 

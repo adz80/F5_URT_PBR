@@ -42,8 +42,59 @@ def get_next_hop_interface(next_hop_ip, parse):
             # print('match!!!')
             return local_interface_vlan
 
+def routes_under_vip(virtual_destination_ip, virtual_destination_mask):
+
+# for each line match is ip address?
+    # extract ip network
+    # extract mask 
+    # extract nex hop interface.
+    # if virtual_vip cover route 
+    #   push    route->net
+    #           route->mask
+    #           route->nexthop
+    #           route->????
+    pass
 
 
+
+
+
+def layer_4_forwarder_resolve_routes(parse):
+    for f5_virtual in parse.find_objects(r'^ltm virtual *'):
+        # Find all VIPs that have ip-forward to then look up route table and match routes under VIP.
+        # Once route is found, look up vlans that they are listerning on and add to route generation.
+        ip_forward_object = f5_virtual.re_search_children(r'\s+ip-forward\s(.*)')
+        if not f5_virtual.re_search_children(r'\s+ip-forward\s(.*)'): # and f5_virtual.re_search_children(r'\translate-address disabled\s(.*)'):
+            virtual_destination_ip = f5_virtual.re_match_iter_typed(r'\s+destination\s(.*)', default="").split(':')[0]
+            virtual_destination_port = f5_virtual.re_match_iter_typed(r'\s+destination\s(.*)', default="").split(':')[1]
+            virtual_destination_mask = f5_virtual.re_match_iter_typed(r'\s+mask\s(.*)', default="")
+            routes = routes_under_vip(virtual_destination_ip, virtual_destination_mask)
+            
+            pass
+        else:
+            pass
+        # if "/" in virtual_destination_ip:
+        #     virtual_destination_ip = virtual_destination_ip.split('/')[2]
+        # virtual_destination_mask = f5_virtual.re_match_iter_typed(r'\s+mask\s(.*)', default="")
+        # if virtual_destination_ip == "any":
+        #     virtual_destination_ip = "0.0.0.0"
+        #     virtual_destination_mask = "0.0.0.0"
+
+        # virtual_pool = f5_virtual.re_match_iter_typed(r'\s+pool\s(.*)', default="")
+        # virtual_source = f5_virtual.re_match_iter_typed(r'\s+source\s(.*)', default="")
+
+        # virtual_vlans = parse.find_object_branches(branchspec=(f5_virtual.text, r'vlans$',r'^\s+\S+'))
+
+        # pass
+
+
+layer_4_forwarder_resolve_routes(parse)
+
+
+
+
+# TODO: function to get all vlans  -> send parse object, return list of vlans.
+# get all policy 
 
 
 # for f5_virtual in parse.find_objects(r'ltm virtual.*policy_route'): # added multiple matches of VIP naming convention.
@@ -106,6 +157,31 @@ for net_self in all_net_self:
     print(net_self_address.network, net_self_address.netmask, "	-	", net_self_vlan_name, net_self_vlan_name)
     
 
+
+def layer_4_forwarder_resolve_routes():
+    for f5_virtual in parse.find_objects('ltm virtual *'):
+        #Find all VIPs that have ip-forward to then look up route table and match routes under VIP.
+        # Once route is found, look up vlans that they are listerning on and add to route generation.
+
+        if not f5_virtual.re_search_children(r'\s+ip-forward\s(.*)', default=""):
+            pass
+
+        if "/" in virtual_destination_ip:
+            virtual_destination_ip = virtual_destination_ip.split('/')[2]
+        virtual_destination_mask = f5_virtual.re_match_iter_typed(r'\s+mask\s(.*)', default="")
+        if virtual_destination_ip == "any":
+            virtual_destination_ip = "0.0.0.0"
+            virtual_destination_mask = "0.0.0.0"
+
+        virtual_pool = f5_virtual.re_match_iter_typed(r'\s+pool\s(.*)', default="")
+        virtual_source = f5_virtual.re_match_iter_typed(r'\s+source\s(.*)', default="")
+
+        virtual_vlans = parse.find_object_branches(branchspec=(f5_virtual.text, r'vlans$',r'^\s+\S+'))
+
+        pass
+
+def parse_layer_4_forwarder_to_routes_to_urt():
+    pass
 
 
 
